@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descript Pro by Digital Doodles 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .animate-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 selection:bg-indigo-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const Icon = ({ name, className }) => {
+            useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} className={className}></i>;
+        };
+
+        const App = () => {
+            const [activeItem, setActiveItem] = useState(null);
+            const [filter, setFilter] = useState('All');
+            const [isLoaded, setIsLoaded] = useState(false);
+
+            useEffect(() => { setIsLoaded(true); }, []);
+
+            const library = [
+                // TOOLS SECTION
+                { 
+                    id: 1, 
+                    title: "Technical Pens", 
+                    category: "Tools", 
+                    icon: "pen-tool", 
+                    color: "bg-slate-900", 
+                    usage: "Professional Inking",
+                    desc: "Precision instruments like Rotring Isograph or Pigma Microns. These provide constant line widths (0.13mm to 2.0mm).",
+                    details: "Use 0.13mm for hatching, 0.35mm for general outlines, and 0.70mm for border frames. Always keep at a 90-degree angle to the surface.",
+                    symbols: "ISO 128 Line Width Standard",
+                    level: "Beginner to Pro"
+                },
+                { 
+                    id: 2, 
+                    title: "T-Squares & Parallel Bars", 
+                    category: "Tools", 
+                    icon: "ruler", 
+                    color: "bg-indigo-600", 
+                    usage: "Horizontal Alignment",
+                    desc: "The primary reference tool for horizontal lines and a base for triangles.",
+                    details: "Ensure the head is firmly against the board's left edge. Use the top edge only to prevent parallax errors. Clean regularly with drafting powder.",
+                    symbols: "Horizontal Datum Base",
+                    level: "Traditional Pro"
+                },
+                { 
+                    id: 3, 
+                    title: "Compass & Dividers", 
+                    category: "Tools", 
+                    icon: "radius", 
+                    color: "bg-blue-500", 
+                    usage: "Geometry & Scaling",
+                    desc: "Instruments used for drawing circles and transferring dimensions without a ruler.",
+                    details: "A 'Bow Compass' with a center wheel is preferred for precision. Dividers are essential for maintaining 'stepping' intervals in architectural layouts.",
+                    symbols: "⌀ (Diameter), R (Radius)",
+                    level: "Intermediate"
+                },
+                
+                // PROCEDURES SECTION
+                { 
+                    id: 4, 
+                    title: "Line Types", 
+                    category: "Procedures", 
+                    icon: "hash", 
+                    color: "bg-emerald-600", 
+                    usage: "Visual Hierarchy",
+                    desc: "A standardized alphabet of lines used to communicate different physical properties.",
+                    details: "Visible Lines (Thick Solid), Hidden Lines (Medium Dashed), Center Lines (Thin Long/Short), and Dimension Lines (Thin with Arrows).",
+                    symbols: "--- (Visible), - - - (Hidden), — · — (Center)",
+                    level: "Critical/All"
+                },
+                { 
+                    id: 5, 
+                    title: "Orthographic Projection", 
+                    category: "Procedures", 
+                    icon: "box", 
+                    color: "bg-amber-600", 
+                    usage: "Multi-View Logic",
+                    desc: "Representing 3D objects in 2D by showing Front, Top, and Side views.",
+                    details: "Use 'First Angle' (European) or 'Third Angle' (US/Standard) projection. All views must align vertically and horizontally using miter lines.",
+                    symbols: "Projection Symbol (Cone Frustum)",
+                    level: "Professional"
+                },
+
+                // SYMBOLS SECTION
+                { 
+                    id: 6, 
+                    title: "Dimensioning Symbols", 
+                    category: "Symbols", 
+                    icon: "type", 
+                    color: "bg-rose-600", 
+                    usage: "Measurement Standards",
+                    desc: "Standard marks used to indicate size, tolerance, and manufacturing intent.",
+                    details: "Dimensions should be placed outside the object outline whenever possible. Use 'Extension Lines' to pull measurement data away from the drawing.",
+                    symbols: "□ (Square), ℄ (Centerline), ⌀ (Diameter)",
+                    level: "Professional"
+                },
+                { 
+                    id: 7, 
+                    title: "Hatching & Materials", 
+                    category: "Symbols", 
+                    icon: "layers", 
+                    color: "bg-purple-600", 
+                    usage: "Material Definition",
+                    desc: "Repeating patterns used to identify the substance of a cut section.",
+                    details: "Steel (double lines), Concrete (dots/triangles), Wood (grain curves), and Earth (diagonal groups). Hatch at 45 degrees relative to borders.",
+                    symbols: "ANSI31, ANSI32, Wood Cross-Section",
+                    level: "Advanced"
+                },
+                { 
+                    id: 8, 
+                    title: "Geometric Tolerancing", 
+                    category: "Symbols", 
+                    icon: "target", 
+                    color: "bg-cyan-600", 
+                    usage: "Precision Control",
+                    desc: "GD&T (Geometric Dimensioning and Tolerancing) symbols for manufacturing limits.",
+                    details: "Indicates how much a surface can vary from perfect form. Crucial for parts that must fit together (e.g., shafts in bearings).",
+                    symbols: "⟘ (Perpendicular), ◎ (Concentricity), ▱ (Flatness)",
+                    level: "Pro / Engineering"
+                }
+            ];
+
+            const categories = ['All', 'Tools', 'Procedures', 'Symbols'];
+            const filtered = filter === 'All' ? library : library.filter(d => d.category === filter);
+
+            return (
+                <div className={`min-h-screen p-4 md:p-8 transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                    
+                    {/* Brand Header */}
+                    <header className="max-w-6xl mx-auto mb-16 text-center">
+                        <div className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-2xl mb-6 shadow-xl shadow-indigo-200/50">
+                            <Icon name="terminal" className="w-4 h-4 text-indigo-400" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Digital Doodles • Technical Lab</span>
+                        </div>
+                        <h1 className="text-6xl md:text-7xl font-black tracking-tighter mb-4 text-slate-900">
+                            De<span className="text-indigo-600">script</span><span className="text-slate-300 ml-2">Pro</span>
+                        </h1>
+                        <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+                            Comprehensive drafting encyclopedia. From primitive line-work to professional geometric dimensioning and tolerancing (GD&T).
+                        </p>
+                    </header>
+
+                    {/* Filter Tabs */}
+                    <nav className="max-w-6xl mx-auto mb-12 flex justify-center p-2 bg-slate-200/50 rounded-[2rem] w-fit mx-auto glass">
+                        {categories.map(cat => (
+                            <button 
+                                key={cat} 
+                                onClick={() => setFilter(cat)} 
+                                className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${filter === cat ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+                            >
+                                {cat}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {/* Interactive Grid */}
+                    <main className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {filtered.map(item => (
+                            <button 
+                                key={item.id} 
+                                onClick={() => setActiveItem(item)} 
+                                className={`group relative w-full aspect-[4/5] flex flex-col items-start justify-end p-8 rounded-[2.5rem] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-200/40 border border-slate-200 overflow-hidden bg-white`}
+                            >
+                                <div className={`absolute top-0 right-0 w-24 h-24 ${item.color} opacity-5 rounded-bl-[4rem] group-hover:scale-150 transition-transform duration-700`}></div>
+                                
+                                <div className={`${item.color} p-4 rounded-2xl text-white mb-auto shadow-lg shadow-current/20`}>
+                                    <Icon name={item.icon} className="w-6 h-6" />
+                                </div>
+
+                                <div className="text-left w-full">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{item.category}</p>
+                                    <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-3">{item.title}</h2>
+                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-tighter">{item.usage}</p>
+                                </div>
+                                
+                                <div className="mt-4 flex items-center justify-between w-full opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+                                    <span className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Learn More</span>
+                                    <Icon name="arrow-right" className="w-4 h-4 text-indigo-600" />
+                                </div>
+                            </button>
+                        ))}
+                    </main>
+
+                    {/* Detailed Technical Overlay */}
+                    {activeItem && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md" onClick={() => setActiveItem(null)}>
+                            <div className="bg-white rounded-[3.5rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in" onClick={e => e.stopPropagation()}>
+                                <div className={`${activeItem.color} p-12 text-white relative`}>
+                                    <button onClick={() => setActiveItem(null)} className="absolute top-8 right-8 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all hover:rotate-90">
+                                        <Icon name="x" className="w-6 h-6" />
+                                    </button>
+                                    <div className="flex items-center gap-4 mb-2">
+                                        <span className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest">{activeItem.category}</span>
+                                        <span className="text-[10px] font-medium text-white/60">Proficiency: {activeItem.level}</span>
+                                    </div>
+                                    <h2 className="text-5xl font-black tracking-tighter">{activeItem.title}</h2>
+                                </div>
+
+                                <div className="p-12 space-y-8 max-h-[60vh] overflow-y-auto">
+                                    <section>
+                                        <h3 className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-3">Professional Abstract</h3>
+                                        <p className="text-2xl font-bold text-slate-800 leading-tight">{activeItem.desc}</p>
+                                    </section>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <section className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                                            <h4 className="text-[9px] font-black text-indigo-600 uppercase mb-3 tracking-widest flex items-center gap-2">
+                                                <Icon name="book-open" className="w-3 h-3" /> Procedures
+                                            </h4>
+                                            <p className="text-sm font-semibold text-slate-600 leading-relaxed">{activeItem.details}</p>
+                                        </section>
+                                        <section className="bg-indigo-50/50 p-6 rounded-3xl border border-indigo-100">
+                                            <h4 className="text-[9px] font-black text-indigo-600 uppercase mb-3 tracking-widest flex items-center gap-2">
+                                                <Icon name="layers" className="w-3 h-3" /> Representations
+                                            </h4>
+                                            <p className="text-xl font-bold text-indigo-900 mono">{activeItem.symbols}</p>
+                                        </section>
+                                    </div>
+
+                                    <div className="flex items-center gap-3 p-4 bg-slate-900 text-white rounded-2xl">
+                                        <Icon name="zap" className="w-4 h-4 text-amber-400" />
+                                        <p className="text-xs font-bold uppercase tracking-widest">Industry Standard: {activeItem.usage}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <footer className="mt-24 text-center">
+                        <div className="inline-block p-6 glass rounded-[2.5rem] border border-slate-200">
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2">Authenticated System</p>
+                            <div className="flex items-center gap-3 text-slate-800">
+                                <span className="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"></span>
+                                <span className="font-bold text-sm">DESCRIPT PRO v1.2.0 • 2026 DIGITAL DOODLES</span>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
